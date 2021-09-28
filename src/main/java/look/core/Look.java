@@ -1,5 +1,7 @@
 package look.core;
 
+import org.hyperic.sigar.FileSystemUsage;
+
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.util.Map;
