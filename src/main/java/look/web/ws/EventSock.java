@@ -6,11 +6,18 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.eclipse.jetty.websocket.api.WriteCallback;
 
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class EventSock extends WebSocketAdapter {
 
 
+    public static Map<String, RemoteEndpoint> socketCons = new ConcurrentHashMap<>();
+
     public static void sendMsg(RemoteEndpoint endpoint, SockMsg msg) {
         try {
+            System.out.println(JSON.toJSONString(msg));
             endpoint.sendString(JSON.toJSONString(msg), new WriteCallback() {
                 @Override
                 public void writeFailed(Throwable x) {
@@ -27,10 +34,16 @@ public class EventSock extends WebSocketAdapter {
         }
     }
 
+    public static void broadcast(SockMsg msg) {
+        for (RemoteEndpoint v : socketCons.values()) {
+            sendMsg(v, msg);
+        }
+    }
 
     @Override
     public void onWebSocketConnect(Session sess) {
         super.onWebSocketConnect(sess);
+        socketCons.put(UUID.randomUUID().toString().replace("-", ""), sess.getRemote());
         System.out.println("Socket Connected: " + sess);
     }
 
@@ -84,6 +97,12 @@ public class EventSock extends WebSocketAdapter {
     @Override
     public void onWebSocketClose(int statusCode, String reason) {
         super.onWebSocketClose(statusCode, reason);
+        for (RemoteEndpoint v : socketCons.values()) {
+            if (v.equals(getRemote())) {
+                socketCons.remove(v);
+                break;
+            }
+        }
         System.out.println("Socket Closed: [" + statusCode + "] " + reason);
     }
 

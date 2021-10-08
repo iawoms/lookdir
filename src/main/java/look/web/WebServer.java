@@ -8,7 +8,6 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import look.web.svlt.*;
 
 /**
  * main
@@ -24,7 +23,7 @@ public class WebServer {
         ResourceHandler resource_handler = new ResourceHandler();
         resource_handler.setDirectoriesListed(false);
         resource_handler.setWelcomeFiles(new String[]{indexPage});
-        resource_handler.setResourceBase("./web");
+        resource_handler.setResourceBase("./");
 
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         SessionHandler sesHdr = new SessionHandler();

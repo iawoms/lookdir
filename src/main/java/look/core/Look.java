@@ -3,6 +3,7 @@ package look.core;
 import look.model.FileSystemUsage;
 import look.monitor.Disk;
 import look.t.LookUtils;
+import look.web.WebServer;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import javax.swing.filechooser.FileSystemView;
@@ -74,7 +75,7 @@ public class Look {
     }
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         Look.initHubs();
         Look.addDir("/ss","*.log",60);
         Look.addDir( "/home/gpadmin/gpAdminLogs","gpstop*.log",60);
@@ -82,7 +83,8 @@ public class Look {
 
         Look.printHubs();
 
-//        Look.startAllHubs();
-        LookUtils.saveTasks(hubs);
+        Look.startAllHubs();
+        WebServer.startServ();
+//        LookUtils.saveTasks(hubs);
     }
 }

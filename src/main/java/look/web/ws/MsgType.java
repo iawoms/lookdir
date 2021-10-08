@@ -14,6 +14,5 @@ public enum MsgType {
     RABPAGE,
     LOGIN,
     REDIRECT,
-    TASKFINISH
-
+    BEAT
 }

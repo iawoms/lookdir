@@ -1,6 +1,12 @@
 package look.core;
 
+import com.alibaba.fastjson.JSON;
+import look.web.ws.EventSock;
+import look.web.ws.MsgType;
+import look.web.ws.SockMsg;
+
 import javax.swing.filechooser.FileSystemView;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,11 +64,18 @@ public class LHub {
         return DECF.format(((1 - (double) drive.getFreeSpace() / (double) drive.getTotalSpace()) * 100)) + "% / " + threshold * 100 + "%";
     }
 
+    public void beat(){
+        SockMsg msg = new SockMsg(MsgType.BEAT, lDirs);
+        EventSock.broadcast(msg);
+    }
+
     public void startWatch() {
         runf = true;
         thr = new Thread(() -> {
+            System.out.println(drive.getPath()+" ] hubing started .");
             while (runf) {
                 try {
+                    beat();
                     lDirsLoadRollDel();
                     if (needDelFile()) {
                         List<LFile> files = sortedSubFiles();

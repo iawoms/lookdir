@@ -9,6 +9,6 @@ public class Ws_Sv extends WebSocketServlet
     @Override
     public void configure(WebSocketServletFactory factory)
     {
-        factory.register(web.ws.EventSock.class);
+        factory.register(EventSock.class);
     }
 }
