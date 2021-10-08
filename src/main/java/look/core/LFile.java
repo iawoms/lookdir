@@ -1,19 +1,16 @@
-package look.model;
+package look.core;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.io.File;
 import java.util.Date;
-
-import static look.t.LookUtils.DATETIME_PARTEN;
 
 public class LFile {
     public String name;
     public Date modTime;
     public String length;
     public String path;
-
+    public boolean delleted;
     private File file;
 
     public LFile(File f) {
@@ -25,12 +22,15 @@ public class LFile {
         file = f;
     }
 
-    public void del() {
+    public boolean del() {
         try {
-            file.delete();
+            System.out.println(path + " deleted .");
+            delleted = file.delete();
+            return delleted;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     @Override

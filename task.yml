@@ -1,0 +1,24 @@
+/boot:
+  lDirs: []
+  threshold: 0.8
+/data3:
+  lDirs: []
+  threshold: 0.8
+/data1:
+  lDirs:
+  - path: /data1/master/gpseg-1/pg_log
+    wildcard: gpdb-2021-06*.csv
+    rollDay: -1
+  threshold: 0.8
+/data2:
+  lDirs: []
+  threshold: 0.8
+/:
+  lDirs:
+  - path: /ss
+    wildcard: '*.log'
+    rollDay: 60
+  - path: /home/gpadmin/gpAdminLogs
+    wildcard: gpstop*.log
+    rollDay: 60
+  threshold: 0.8

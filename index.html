@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>--</title>
+</head>
+<body>
+
+
+</body>
+<script>
+    var socket;
+    if (!window.WebSocket) {
+        window.WebSocket = window.MozWebSocket;
+    }
+    if (window.WebSocket) {
+        var uri = "ws://" + window.location.host + "/ws";
+        socket = new WebSocket(uri);
+    } else {
+        alert("Your browser does not support Web Socket.");
+    }
+
+    function send(message) {
+        if (!window.WebSocket) {
+            return;
+        }
+        if (socket.readyState == WebSocket.OPEN) {
+            socket.send(message);
+        } else {
+            alert("The socket is not open . " + socket.readyState);
+        }
+    }
+</script>
+<script>
+    $(function () {
+        socket.onopen = function (event) {
+            cajax('/login', 'GET', null, function (res) {
+                $('#h_usr').text(res);
+                send(JSON.stringify({msgType: "AUTHID", target: res}));
+            });
+        };
+        socket.onclose = function (event) {
+        };
+        socket.onmessage = function (event) {
+            // console.log(event.data);
+            let resObj = $.parseJSON(event.data);
+            switch (resObj.msgType) {
+                case "NODESTATE": {
+                    updateSed($('#' + resObj.target).find('.sed'), resObj.content)
+                }
+                    break;
+                case "SERVERTIME": {
+                    let tp = resObj.content;
+                    $("[data-idx='" + tp.today + "']").addClass('btn-shadow');
+                    for (var i = 0; i < tp.days.length; i++) {
+                        let d = tp.days[i];
+                        let btn = $("[data-idx='" + i + "']");
+                        if (d.enable) {
+                            btn.removeClass('btn-default');
+                            btn.addClass('btn-primary');
+                        } else {
+
+                            btn.removeClass('btn-primary');
+                            btn.addClass('btn-default');
+                        }
+                    }
+                    $("#serverTime").text(tp.serverTime);
+                }
+                    break;
+
+            }
+        };
+
+    });
+</script>
+</html>
