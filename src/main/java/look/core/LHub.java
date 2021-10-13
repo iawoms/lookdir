@@ -1,32 +1,34 @@
 package look.core;
 
-import com.alibaba.fastjson.JSON;
 import look.web.ws.EventSock;
 import look.web.ws.MsgType;
 import look.web.ws.SockMsg;
 
-import javax.swing.filechooser.FileSystemView;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.Vector;
 
 import static look.t.LookUtils.DECF;
 
 public class LHub {
+    public String id;
     public Vector<LDir> lDirs;
     public double threshold = 0.8;
+    public String drivePath;
     private File drive;
     private Thread thr;
     private int checkInterval = 5000;
     private boolean runf = true;
 
     public LHub(String drivePath) {
+        this.drivePath = drivePath;
         drive = new File(drivePath);
         lDirs = new Vector<>();
-        FileSystemView fsv = FileSystemView.getFileSystemView();
+        id = UUID.randomUUID().toString().replace("-","");
+//        FileSystemView fsv = FileSystemView.getFileSystemView();
     }
 
     public void addDir(LDir dir) {
@@ -49,12 +51,13 @@ public class LHub {
         return lfiles;
     }
 
-    public void lDirsLoadRollDel(){
+    public void lDirsLoadRollDel() {
         for (LDir ld : lDirs) {
             ld.loadFiles();
             ld.rollDel();
         }
     }
+
     public boolean needDelFile() {
         double present = (double) drive.getFreeSpace() / (double) drive.getTotalSpace();
         return present < 1 - threshold;
@@ -64,15 +67,15 @@ public class LHub {
         return DECF.format(((1 - (double) drive.getFreeSpace() / (double) drive.getTotalSpace()) * 100)) + "% / " + threshold * 100 + "%";
     }
 
-    public void beat(){
-        SockMsg msg = new SockMsg(MsgType.BEAT, lDirs);
+    public void beat() {
+        SockMsg msg = new SockMsg(MsgType.BEAT, this);
         EventSock.broadcast(msg);
     }
 
     public void startWatch() {
         runf = true;
         thr = new Thread(() -> {
-            System.out.println(drive.getPath()+" ] hubing started .");
+            System.out.println(drive.getPath() + " ] hubing started .");
             while (runf) {
                 try {
                     beat();

@@ -4,11 +4,120 @@
     <meta charset="UTF-8">
     <title>--</title>
     <script src="jquery-3.5.1.min.js"></script>
-
 </head>
-<body>
+<style type="text/css">
+    table {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        table-layout: fixed;
+    }
 
-<div id="list"></div>
+    table caption {
+        font-size: 1.5em;
+        margin: .5em 0 .75em;
+    }
+
+    table tr {
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        padding: .35em;
+    }
+
+    table th,
+    table td {
+        padding: .625em;
+        text-align: center;
+    }
+
+    table th {
+        font-size: .85em;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+
+    @media screen and (max-width: 600px) {
+        table {
+            border: 0;
+        }
+
+        table caption {
+            font-size: 1.3em;
+        }
+
+        table thead {
+            border: none;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+
+        table tr {
+            border-bottom: 3px solid #ddd;
+            display: block;
+            margin-bottom: .625em;
+        }
+
+        table td {
+            border-bottom: 1px solid #ddd;
+            display: block;
+            font-size: .8em;
+            text-align: right;
+        }
+
+        table td::before {
+            /*
+            * aria-label has no advantage, it won't be read inside a table
+            content: attr(aria-label);
+            */
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        table td:last-child {
+            border-bottom: 0;
+        }
+    }
+
+
+    /* general styling */
+    body {
+        font-family: "Open Sans", sans-serif;
+        line-height: 1.25;
+    }
+</style>
+<body>
+<table>
+    <!--<caption>Statement Summary</caption>-->
+    <thead>
+    <tr>
+        <th scope="col" class="path">path</th>
+        <th scope="col">threshold</th>
+        <th scope="col">dirs</th>
+        <th scope="col">-</th>
+    </tr>
+
+    <tr id="hv" style="display: none">
+        <td   class="path">-</td>
+        <td  class="threshold">-</td>
+        <td  class="dirs">-</td>
+        <td   class="beat"><li class="beat"></li></td>
+    </tr>
+    </thead>
+    <tbody id="list">
+
+    </tbody>
+</table>
+<!--<h5 style="display: none" id="hh"></h5>-->
+<!--<div id="list"></div>-->
 
 </body>
 <script>
@@ -35,6 +144,17 @@
     }
 </script>
 <script>
+    function fillLine(hv,con){
+
+        hv.attr('id',con.id);
+        hv.find('.path').text(con.drivePath);
+        hv.find('.threshold').text(con.threshold);
+        hv.find('.dirs').text(con.lDirs.length);
+        hv.show();
+        hv.find('.beat').fadeIn();
+        hv.find('.beat').fadeOut();
+
+    }
     $(function () {
         socket.onopen = function (event) {
             // cajax('/login', 'GET', null, function (res) {
@@ -49,7 +169,18 @@
             let resObj = $.parseJSON(event.data);
             switch (resObj.type) {
                 case "BEAT": {
-                    $('#list').text(resObj.content[0].path);
+                    let con = resObj.content;
+                    let id = con.id;
+                    let hv = $('#'+id);
+                    if(hv.length > 0){
+                        fillLine(hv,con);
+                    }else {
+                        hv = $('#hv').clone();
+                        fillLine(hv,con);
+
+                        $('#list').append(hv);
+                    }
+
                 }
                     break;
                 case "SERVERTIME": {
