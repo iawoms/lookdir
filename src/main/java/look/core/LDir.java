@@ -1,5 +1,6 @@
 package look.core;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
@@ -57,6 +58,7 @@ public class LDir {
         }
     }
     @JsonIgnore
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     public Date getExpireTime() {
         Calendar cc = Calendar.getInstance();
         cc.add(Calendar.DATE, -rollDay);

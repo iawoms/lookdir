@@ -28,12 +28,12 @@
 
     table th,
     table td {
-        padding: .625em;
+        padding: .250em;
         text-align: center;
     }
 
     table th {
-        font-size: .85em;
+        font-size: .55em;
         letter-spacing: .1em;
         text-transform: uppercase;
     }
@@ -87,11 +87,18 @@
         }
     }
 
-
     /* general styling */
     body {
         font-family: "Open Sans", sans-serif;
         line-height: 1.25;
+    }
+    .path{
+        text-align: left;
+    }
+    .subDiv{
+        padding-left: 3.5em;
+        position: relative;
+        width: 80em;
     }
 </style>
 <body>
@@ -106,10 +113,12 @@
     </tr>
 
     <tr id="hv" style="display: none">
-        <td   class="path">-</td>
-        <td  class="threshold">-</td>
-        <td  class="dirs">-</td>
-        <td   class="beat"><li class="beat"></li></td>
+        <td class="path">-</td>
+        <td class="threshold">-</td>
+        <td class="dirs">-</td>
+        <td class="beat">
+            <li class="beat"></li>
+        </td>
     </tr>
     </thead>
     <tbody id="list">
@@ -144,17 +153,36 @@
     }
 </script>
 <script>
-    function fillLine(hv,con){
+    function fillLine(hv, con) {
 
-        hv.attr('id',con.id);
+        hv.attr('id', con.id);
         hv.find('.path').text(con.drivePath);
         hv.find('.threshold').text(con.threshold);
         hv.find('.dirs').text(con.lDirs.length);
         hv.show();
         hv.find('.beat').fadeIn();
         hv.find('.beat').fadeOut();
-
+        if (con.lDirs.length > 0) {
+            fillDir(hv, con);
+        }
     }
+
+    function fillDir(hv, con) {
+        let hid = 'dir-' + con.id;
+        let hvdir = $('#' + hid);
+        if (hvdir.length > 0) {
+            hvdir.clear();
+        } else {
+            hv.after('<div class="subDiv" id="' + hid + '"></div>');
+        }
+        hvdir = $('#' + hid);
+        for (let i = 0; i < con.lDirs.length; i++) {
+            let dir = con.lDirs[i];
+            hvdir.append('<a>' + dir.path + '</a> wirldcard : ' + dir.wildcard + ' rollDay : '+dir.rollDay+'<br>');
+
+        }
+    }
+
     $(function () {
         socket.onopen = function (event) {
             // cajax('/login', 'GET', null, function (res) {
@@ -171,13 +199,12 @@
                 case "BEAT": {
                     let con = resObj.content;
                     let id = con.id;
-                    let hv = $('#'+id);
-                    if(hv.length > 0){
-                        fillLine(hv,con);
-                    }else {
+                    let hv = $('#' + id);
+                    if (hv.length > 0) {
+                        fillLine(hv, con);
+                    } else {
                         hv = $('#hv').clone();
-                        fillLine(hv,con);
-
+                        fillLine(hv, con);
                         $('#list').append(hv);
                     }
 
