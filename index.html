@@ -89,16 +89,25 @@
 
     /* general styling */
     body {
-        font-family: "Open Sans", sans-serif;
         line-height: 1.25;
+        font: 12px/1.5 'PT Sans', serif;
+        margin: 25px;
     }
-    .path{
+
+    .path {
         text-align: left;
     }
-    .subDiv{
+
+    .subDiv {
         padding-left: 3.5em;
         position: relative;
         width: 80em;
+    }
+
+    .tag {
+        height: 10px;
+        background-color: cadetblue;
+        padding: 3px  5px 3px 5px;
     }
 </style>
 <body>
@@ -125,9 +134,7 @@
 
     </tbody>
 </table>
-<!--<h5 style="display: none" id="hh"></h5>-->
-<!--<div id="list"></div>-->
-
+<a class="tag">*.jpg</a>
 </body>
 <script>
     var socket;
@@ -178,7 +185,7 @@
         hvdir = $('#' + hid);
         for (let i = 0; i < con.lDirs.length; i++) {
             let dir = con.lDirs[i];
-            hvdir.append('<a>' + dir.path + '</a> wirldcard : ' + dir.wildcard + ' rollDay : '+dir.rollDay+'<br>');
+            hvdir.append('<a>' + dir.path + '</a>   <a class="tag">' + dir.wildcard + '</a> <a class="tag">' + dir.rollDay + '</a><br>');
 
         }
     }
