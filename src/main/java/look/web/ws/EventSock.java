@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EventSock extends WebSocketAdapter {
 
+    String id ;
 
     public static Map<String, RemoteEndpoint> socketCons = new ConcurrentHashMap<>();
 
@@ -43,7 +44,8 @@ public class EventSock extends WebSocketAdapter {
     @Override
     public void onWebSocketConnect(Session sess) {
         super.onWebSocketConnect(sess);
-        socketCons.put(UUID.randomUUID().toString().replace("-", ""), sess.getRemote());
+        id = UUID.randomUUID().toString().replace("-", "");
+        socketCons.put(id, sess.getRemote());
         System.out.println("Socket Connected: " + sess);
     }
 
@@ -97,12 +99,8 @@ public class EventSock extends WebSocketAdapter {
     @Override
     public void onWebSocketClose(int statusCode, String reason) {
         super.onWebSocketClose(statusCode, reason);
-        for (RemoteEndpoint v : socketCons.values()) {
-            if (v.equals(getRemote())) {
-                socketCons.remove(v);
-                break;
-            }
-        }
+        socketCons.remove(id);
+        System.out.println(id+" sockremoved");
         System.out.println("Socket Closed: [" + statusCode + "] " + reason);
     }
 
